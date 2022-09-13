@@ -4,7 +4,9 @@
 
 Generate Dofus Retro maps as PNG, from [API.DofusRetro.fr](https://api.dofusretro.fr) datas
 
-No images are provided with this project, only using the API to process (might take a while to process, no image are cached to your disk)
+No images are provided with this project, only using the API to process (might take a while to process)
+
+You may use your own local images, but you won't get any support with the extraction process
 
 ## How to use
 

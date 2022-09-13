@@ -2,7 +2,10 @@ const axios = require('axios');
 const fs = require('fs');
 const { createCanvas, loadImage } = require('canvas');
 
+const useLocalData = false;
 const imgPath = 'https://cdn.dofusretro.fr/img/maps-gfx'; // + /[ground,object]/[id].png
+const localPath = 'path/to/local/maps-gfx';
+
 const CONSTANTS = {
   CELL_WIDTH: 53,
   CELL_HEIGHT: 27,
@@ -18,8 +21,36 @@ const CONSTANTS = {
 let groundJson, objectJson = {};
 
 async function loadJSON() {
-  groundJson = (await axios.get(`${imgPath}/ground/ground.json`)).data;
-  objectJson = (await axios.get(`${imgPath}/object/object.json`)).data;
+  if (useLocalData) {
+    groundJson = require(`${localPath}/ground.json`);
+    objectJson = require(`${localPath}/object.json`);
+  } else {
+    groundJson = (await axios.get(`${imgPath}/ground/ground.json`)).data;
+    objectJson = (await axios.get(`${imgPath}/object/object.json`)).data;
+  }
+}
+
+async function getImage(id, type) {
+  let img;
+  if (useLocalData) {
+    img = await loadImage(`${localPath}/${type}/${id}.png`);
+  } else {
+    if (!fs.existsSync(`./tmp/${type}`)) {
+      fs.mkdirSync(`./tmp/${type}`, { recursive: true });
+    }
+    if (fs.existsSync(`tmp/${type}/${id}.png`)) {
+      img = await loadImage(`tmp/${type}/${id}.png`);
+    } else {
+      await axios.get(`${imgPath}/${type}/${id}.png`, { responseType: 'arraybuffer' }).then(async (response) => {
+        fs.writeFileSync(`tmp/${type}/${id}.png`, response.data);
+        img = await loadImage(`tmp/${type}/${id}.png`);
+      }).catch((error) => {
+        console.error(error);
+        process.exit(1);
+      });
+    }
+  }
+  return img;
 }
 
 function getCellPos(cellId, nbCellPerRow) {
@@ -66,14 +97,14 @@ async function generateMap(mapid) {
 
     const context = mapCanvas.getContext('2d');
     if (mapData.backgroundNum > 0) {
-      const backgroundImage = await loadImage(`${imgPath}/ground/${mapData.backgroundNum}.png`);
-      context.drawImage(backgroundImage, 0, 0, imageDim.width, imageDim.height);
+      const image = await getImage(mapData.backgroundNum, 'ground');
+      context.drawImage(image, 0, 0, imageDim.width, imageDim.height);
     }
 
     for (let i = 0; i < mapData.cellsData.length; i++) {
       let cell = mapData.cellsData[i];
       if (cell.layerGroundNum > 0) {
-        let groundImage = await loadImage(`${imgPath}/ground/${cell.layerGroundNum}.png`);
+        let image = await getImage(cell.layerGroundNum, 'ground');
         const cellPos = getCellPos(cell.id, mapData.width);
         const y = cellPos.y * CONSTANTS.CELL_HALF_HEIGHT;
         let x = cellPos.x * CONSTANTS.CELL_WIDTH;
@@ -91,12 +122,12 @@ async function generateMap(mapid) {
         context.save();
         if (cell.layerGroundFlip) {
           context.scale(-1, 1);
-          pos.x = -pos.x - groundImage.width;
+          pos.x = -pos.x - image.width;
         }
         if (cell.layerGroundRot > 0) {
-          groundImage = rotateImage(groundImage, ((cell.layerGroundRot * 90) * Math.PI) / 180);
+          image = rotateImage(image, ((cell.layerGroundRot * 90) * Math.PI) / 180);
         }
-        context.drawImage(groundImage, pos.x, pos.y);
+        context.drawImage(image, pos.x, pos.y);
         context.restore();
       }
     };
@@ -104,7 +135,7 @@ async function generateMap(mapid) {
     for (let i = 0; i < mapData.cellsData.length; i++) {
       let cell = mapData.cellsData[i];
       if (cell.layerObject1Num > 0) {
-        let image = await loadImage(`${imgPath}/object/${cell.layerObject1Num}.png`);
+        let image = await getImage(cell.layerObject1Num, 'object');
         const cellPos = getCellPos(cell.id, mapData.width);
         const y = cellPos.y * CONSTANTS.CELL_HALF_HEIGHT;
         let x = cellPos.x * CONSTANTS.CELL_WIDTH;
@@ -135,7 +166,7 @@ async function generateMap(mapid) {
     for (let i = 0; i < mapData.cellsData.length; i++) {
       let cell = mapData.cellsData[i];
       if (cell.layerObject2Num > 0) {
-        const image = await loadImage(`${imgPath}/object/${cell.layerObject2Num}.png`);
+        let image = await getImage(cell.layerObject2Num, 'object');
         const cellPos = getCellPos(cell.id, mapData.width);
         const y = cellPos.y * CONSTANTS.CELL_HALF_HEIGHT;
         let x = cellPos.x * CONSTANTS.CELL_WIDTH;
@@ -163,6 +194,7 @@ async function generateMap(mapid) {
     const buffer = mapCanvas.toBuffer('image/png');
     if (!fs.existsSync(`./output`)) fs.mkdirSync(`./output`);
     fs.writeFileSync(`./output/${mapid}.png`, buffer);
+    if (!useLocalData) fs.rmSync(`./tmp`, { recursive: true });
     console.log(`Map ${mapid} rendered in ${new Date() - startTime}ms ! (output/${mapid}.png)`);
   }).catch((error) => {
     console.error((error.response) ? error.response.data : error);
