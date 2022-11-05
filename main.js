@@ -105,7 +105,7 @@ async function generateMap(mapid) {
       let cell = mapData.cellsData[i];
       if (cell.layerGroundNum > 0) {
         let image = await getImage(cell.layerGroundNum, 'ground');
-        const cellPos = getCellPos(cell.id, mapData.width);
+        const cellPos = getCellPos(i, mapData.width);
         const y = cellPos.y * CONSTANTS.CELL_HALF_HEIGHT;
         let x = cellPos.x * CONSTANTS.CELL_WIDTH;
         if (cellPos.y % 2 === 1) {
@@ -136,7 +136,7 @@ async function generateMap(mapid) {
       let cell = mapData.cellsData[i];
       if (cell.layerObject1Num > 0) {
         let image = await getImage(cell.layerObject1Num, 'object');
-        const cellPos = getCellPos(cell.id, mapData.width);
+        const cellPos = getCellPos(i, mapData.width);
         const y = cellPos.y * CONSTANTS.CELL_HALF_HEIGHT;
         let x = cellPos.x * CONSTANTS.CELL_WIDTH;
         if (cellPos.y % 2 === 1) {
@@ -167,7 +167,7 @@ async function generateMap(mapid) {
       let cell = mapData.cellsData[i];
       if (cell.layerObject2Num > 0) {
         let image = await getImage(cell.layerObject2Num, 'object');
-        const cellPos = getCellPos(cell.id, mapData.width);
+        const cellPos = getCellPos(i, mapData.width);
         const y = cellPos.y * CONSTANTS.CELL_HALF_HEIGHT;
         let x = cellPos.x * CONSTANTS.CELL_WIDTH;
         if (cellPos.y % 2 === 1) {
