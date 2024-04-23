@@ -3,7 +3,7 @@ const fs = require('fs');
 const { createCanvas, loadImage } = require('canvas');
 
 const useLocalData = false;
-const imgPath = 'https://cdn.dofusretro.fr/img/maps-gfx'; // + /[ground,object]/[id].png
+const imgPath = 'https://api.dofusretro.fr/img/maps-gfx'; // + /[ground,object]/[id].png
 const localPath = 'path/to/local/maps-gfx';
 
 const CONSTANTS = {

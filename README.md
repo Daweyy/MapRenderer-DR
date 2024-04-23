@@ -1,4 +1,4 @@
-# <img src="https://cdn.dofusretro.fr/img/map.png" height="20"> Map Renderer for Dofus Retro 
+# <img src="https://api.dofusretro.fr/img/map.png" height="20"> Map Renderer for Dofus Retro 
 
 ## About
 
