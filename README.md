@@ -15,7 +15,7 @@ No images are provided with this project, if needed, they will be loaded from AP
 
 - Install dependencies : 
 ```shell
-bun install
+bun install --production #ignore dev and optional dependencies
 ```
 - Run :
 ```shell
