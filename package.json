@@ -1,16 +1,17 @@
 {
-  "name": "maprenderer-dr",
-  "version": "0.0.1",
-  "description": "MapRenderer for Dofus Retro",
-  "dependencies": {
-    "axios": "^0.27.2",
-    "canvas": "^2.10.1"
-  },
-  "author": "Dawey",
-  "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ShowMeDawey/MapRenderer-DR.git"
-  },
-  "homepage": "https://github.com/ShowMeDawey/MapRenderer-DR#readme"
+	"name": "maprenderer-dr",
+	"version": "0.1.0",
+	"author": "Dawey",
+	"description": "MapRenderer for Dofus Retro",
+	"scripts": {
+		"start": "bun run main.js",
+		"biome": "bunx @biomejs/biome format --write ."
+	},
+	"dependencies": {
+		"@napi-rs/canvas": "^0.1.52"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.7.1",
+		"@types/bun": "^1.1.0"
+	}
 }
