@@ -4,26 +4,30 @@
 
 Generate Dofus Retro maps as PNG, from [API.DofusRetro.fr](https://api.dofusretro.fr) datas
 
-No images are provided with this project, only using the API to process (might take a while to process)
-
-You may use your own local images, but you won't get any support with the extraction process
+No images are provided with this project, if needed, they will be loaded from API and cached
 
 ## How to use
+- Get [Bun](https://bun.sh/) runtime (not compatible with Node.JS anymore)
 
-- Clone the repository
+
+- Clone repository
+
 
 - Install dependencies : 
 ```shell
-npm install
+bun install
 ```
-- Process :
+- Run :
 ```shell
-node main.js mapid
+bun main.js <mapid>
+# OR
+bun run start <mapid>
 ```
+- Find the result in output directory
 
 ## Unsupported features
 - Random sprites
 - Ground levels
 - Rotations (partially)
 
-[Any contributions you make are greatly appreciated](https://github.com/ShowMeDawey/MapRenderer-DR)
+[Feel free to contribute](https://github.com/Daweyy/MapRenderer-DR/fork)
